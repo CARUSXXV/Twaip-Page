@@ -1,0 +1,89 @@
+* {
+    box-sizing:inherit;
+}
+
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #e9ecef;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+    color: #343a40;
+}
+
+.container {
+    background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    padding: 40px;
+    text-align: center;
+    width: 300px;
+}
+
+h1 {
+    font-size: 2.5em;
+    margin-bottom: 20px;
+    color: #007bff; /* Color azul */
+}
+
+#hangmanCanvas {
+    border: 2px solid #007bff; /* Borde azul */
+    background-color: #f8f9fa; /* Fondo claro para el canvas */
+}
+
+#wordDisplay {
+    font-size: 2em;
+    letter-spacing: 0.5em;
+    margin: 20px 0;
+}
+
+#wrongLetters {
+    color: red;
+    margin-bottom: 20px;
+    margin-top: 35px;
+    font-size: 20px;
+}
+
+input[type="text"] {
+    padding: 10px;
+    font-size: 1.2em;
+    border-radius: 5px;
+    border: 2px solid #007bff; /* Borde azul */
+    width: calc(100% - 22px); /* Ajustar ancho */
+    margin-top: 20px;
+}
+
+input[type="text"]:focus {
+    outline: none; /* Sin borde por defecto */
+    border-color: #0056b3; /* Color más oscuro al enfocar */
+}
+
+button {
+    background-color: #007bff; /* Color azul */
+    color: white;
+    padding: 10px 15px;
+    border-radius: 5px;
+    border: none;
+    font-size: 1em;
+    cursor: pointer;
+    transition: background-color 0.3s ease; /* Transición suave */
+    margin-top: 30px;
+}
+
+button:hover {
+    background-color: #0056b3; /* Color más oscuro al pasar el mouse */
+}
+
+button[disabled] {
+    background-color: #6c757d; /* Color gris para botón deshabilitado */
+}
+
+#message {
+    margin-top: 20px;
+}
+
+#restartButton {
+    margin-left: 80px;
+}

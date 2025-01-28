@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Conecta 4</title>
+    <link rel="stylesheet" href="conecta4.css">
+</head>
+<body> 
+    <div class="game-container"> 
+        <h1>Conecta 4</h1> 
+        <div id="board"></div> 
+        <button id="reset-btn">Reiniciar Juego</button> 
+    </div>
+<div>
+        
+
+    <script>   
+const rows = 6;
+const cols = 7;
+let currentPlayer = 1;
+let board = [];
+
+// Crear tablero vacío
+for (let i = 0; i < rows; i++) {
+    board[i] = new Array(cols).fill(0);
+}
+
+// Renderizar tablero en el DOM
+const boardElement = document.getElementById('board');
+for (let i = 0; i < rows; i++) {
+    for (let j = 0; j < cols; j++) {
+        const cell = document.createElement('div');
+        cell.classList.add('cell');
+        cell.dataset.row = i;
+        cell.dataset.col = j;
+        cell.addEventListener('click', handleCellClick);
+        boardElement.appendChild(cell);
+    }
+}
+
+// Manejar clics en las celdas
+function handleCellClick(event) {
+    const row = parseInt(event.target.dataset.row);
+    const col = parseInt(event.target.dataset.col);
+
+    // Encontrar la primera celda vacía en la columna
+    for (let i = rows - 1; i >= 0; i--) {
+        if (board[i][col] === 0) {
+            board[i][col] = currentPlayer;
+            updateBoard();
+            if (checkWin(i, col)) {
+                alert(`¡Jugador ${currentPlayer} gana!`);
+                resetBoard();
+            }
+            currentPlayer = currentPlayer === 1 ? 2 : 1;
+            break;
+        }
+    }
+}
+
+// Actualizar la vista del tablero
+function updateBoard() {
+    for (let i = 0; i < rows; i++) {
+        for (let j = 0; j < cols; j++) {
+            const cell = document.querySelector(`.cell[data-row="${i}"][data-col="${j}"]`);
+            if (board[i][j] === 1) {
+                cell.classList.add('player1');
+            } else if (board[i][j] === 2) {
+                cell.classList.add('player2');
+            } else {
+                cell.classList.remove('player1', 'player2');
+            }
+        }
+    }
+}
+
+// Verificar si hay un ganador
+function checkWin(row, col) {
+    return checkDirection(row, col, 1, 0) || // Horizontal
+           checkDirection(row, col, 0, 1) || // Vertical
+           checkDirection(row, col, 1, 1) || // Diagonal descendente
+           checkDirection(row, col, 1, -1);   // Diagonal ascendente
+}
+
+// Verificar dirección específica
+function checkDirection(row, col, rowDir, colDir) {
+    let count = 0;
+    for (let i = -3; i <= 3; i++) {
+        const r = row + i * rowDir;
+        const c = col + i * colDir;
+        if (r >= 0 && r < rows && c >= 0 && c < cols && board[r][c] === currentPlayer) {
+            count++;
+            if (count === 4) return true;
+        } else {
+            count = 0;
+        }
+    }
+    return false;
+}
+
+// Reiniciar el tablero
+const resetButton = document.getElementById('reset-btn');
+resetButton.addEventListener('click', resetBoard);
+
+function resetBoard() {
+    for (let i = 0; i < rows; i++) {
+        for (let j = 0; j < cols; j++) {
+            board[i][j] = 0;
+        }
+    }
+    updateBoard();
+    currentPlayer = 1;
+}
+
+    </script>
+</body>
+</html>

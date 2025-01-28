@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="estilosrompecabezas.css">
+    <title>Juego de Rompecabezas</title>
+</head>
+<body>
+    <div id="instructions-panel">
+        <h2>Instrucciones</h2>
+        <p>Bienvenido al rompecabezas. Aquí están las instrucciones:</p>
+        <ul>
+            <li>Haz clic en una pieza adyacente al espacio vacío para moverla.</li>
+            <li>El objetivo es ordenar todas las piezas en la cuadrícula.</li>
+            <li>Haz clic en el botón "Mezclar" para iniciar un nuevo juego.</li>
+            <li>¡Buena suerte!</li>
+        </ul>
+    </div>
+    
+    <div id="difficulty-container">
+        <select id="difficulty">
+            <option value="3">Fácil (3x3)</option>
+            <option value="4">Medio (4x4)</option>
+            <option value="5">Difícil (5x5)</option>
+        </select>
+    </div>
+    
+    <div id="game-container">
+        <div id="puzzle"></div>
+    </div>
+    
+    <button id="shuffle">Mezclar</button>
+    <div id="time">Tiempo: 0</div>
+    <script>
+        const puzzleContainer = document.getElementById('puzzle');
+const shuffleButton = document.getElementById('shuffle');
+const timeDisplay = document.getElementById('time');
+const difficultySelect = document.getElementById('difficulty');
+
+let pieces = [];
+let timer;
+let seconds = 0;
+let size = 3; // Tamaño por defecto (3x3)
+
+// Crear piezas
+function createPuzzle() {
+    pieces = [];
+    for (let i = 0; i < size * size; i++) {
+        pieces.push(i);
+    }
+    renderPuzzle();
+}
+
+// Renderizar rompecabezas
+function renderPuzzle() {
+    puzzleContainer.innerHTML = '';
+    puzzleContainer.style.gridTemplateColumns = `repeat(${size}, 100px)`;
+    puzzleContainer.style.gridTemplateRows = `repeat(${size}, 100px)`;
+
+    pieces.forEach((piece, index) => {
+        const pieceDiv = document.createElement('div');
+        pieceDiv.classList.add('piece');
+        pieceDiv.textContent = piece !== 0 ? piece : '';
+        pieceDiv.style.backgroundImage = piece !== 0 ? `url('https://via.placeholder.com/300?text=Piece+${piece}')` : 'none';
+        pieceDiv.setAttribute('data-index', index);
+        pieceDiv.addEventListener('click', () => movePiece(index));
+        puzzleContainer.appendChild(pieceDiv);
+    });
+}
+
+// Mover pieza
+function movePiece(index) {
+    const emptyIndex = pieces.indexOf(0);
+    const validMoves = [emptyIndex - 1, emptyIndex + 1, emptyIndex - size, emptyIndex + size];
+
+    // Validar movimientos dentro de los límites
+    if (validMoves.includes(index)) {
+        // Asegurarse de que solo se mueve una pieza adyacente a la casilla vacía
+        if (index === emptyIndex - 1 && emptyIndex % size !== 0) { // Movimiento a la izquierda
+            [pieces[index], pieces[emptyIndex]] = [pieces[emptyIndex], pieces[index]];
+        } else if (index === emptyIndex + 1 && (emptyIndex + 1) % size !== 0) { // Movimiento a la derecha
+            [pieces[index], pieces[emptyIndex]] = [pieces[emptyIndex], pieces[index]];
+        } else if (index === emptyIndex - size) { // Movimiento hacia arriba
+            [pieces[index], pieces[emptyIndex]] = [pieces[emptyIndex], pieces[index]];
+        } else if (index === emptyIndex + size) { // Movimiento hacia abajo
+            [pieces[index], pieces[emptyIndex]] = [pieces[emptyIndex], pieces[index]];
+        }
+        
+        renderPuzzle();
+        checkWin();
+    }
+}
+
+// Mezclar piezas
+shuffleButton.addEventListener('click', () => {
+    size = parseInt(difficultySelect.value);
+    createPuzzle();
+    clearInterval(timer);
+    seconds = 0;
+    timeDisplay.textContent = seconds;
+    timer = setInterval(() => {
+        seconds++;
+        timeDisplay.textContent = seconds;
+    }, 1000);
+});
+
+createPuzzle();
+    </script>
+</body>
+</html>

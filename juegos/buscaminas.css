@@ -1,0 +1,107 @@
+body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    margin: 0;
+    font-family: 'Arial', sans-serif;
+    background-color: #f0f4f8;
+}
+
+h1 {
+    color: #007bff;
+    margin-bottom: 20px;
+}
+
+#game {
+    display: grid;
+    grid-template-columns: repeat(10, 40px);
+    grid-template-rows: repeat(10, 40px);
+    gap: 4px;
+}
+
+.cell {
+    width: 40px;
+    height: 40px;
+    background-color: #e0e0e0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 20px;
+    font-weight: bold;
+    border-radius: 4px;
+    transition: background-color 0.3s, transform 0.2s;
+}
+
+.cell:hover {
+    background-color: #d1d1d1;
+}
+
+.cell.revealed {
+    background-color: #ffffff;
+    cursor: default;
+}
+
+.cell.mine {
+    background-color: #ff4d4d;
+}
+
+.cell.flag {
+    background-color: #ffc107;
+}
+
+.cell.adjacent-1 {
+    color: blue;
+}
+
+.cell.adjacent-2 {
+    color: green;
+}
+
+.cell.adjacent-3 {
+    color: red;
+}
+
+.cell.adjacent-4 {
+    color: navy;
+}
+
+.cell.adjacent-5 {
+    color: maroon;
+}
+
+.cell.adjacent-6 {
+    color: turquoise;
+}
+
+.cell.adjacent-7 {
+    color: black;
+}
+
+.cell.adjacent-8 {
+    color: gray;
+}
+
+.instructions-panel {
+    position: absolute; 
+    top: 10px; 
+    left: 10px; 
+    padding: 15px; 
+    border: 3px solid #0c8ea5;
+    border-radius: 10px; 
+    background-color: #ffffff; 
+    z-index: 1000; 
+    margin-top: 30px;
+    margin-left: 15px;
+}
+
+.instructions-panel h2 {
+    margin-top: 0;
+}
+
+.instructions-panel ul {
+    list-style-type: disc;
+    padding-left: 20px;
+}

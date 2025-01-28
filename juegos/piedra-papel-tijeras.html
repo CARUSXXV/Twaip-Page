@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Piedra, Papel o Tijera</title>
+    <link rel="stylesheet" href="stylespiedrapapeltijeras.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Piedra, Papel o Tijera</h1>
+        <label for="dificultad">Selecciona la dificultad:</label>
+        <select id="dificultad">
+            <option value="facil">Fácil</option>
+            <option value="normal">Normal</option>
+            <option value="dificil">Difícil</option>
+        </select>
+        <div class="buttons">
+            <button id="piedra">Piedra</button>
+            <button id="papel">Papel</button>
+            <button id="tijera">Tijera</button>
+        </div>
+        <div class="result">
+            <p id="resultado"></p>
+            <p id="eleccionIA"></p>
+        </div>
+        <div class="estadisticas">
+            <p>Victorias: <span id="victorias">0</span></p>
+            <p>Derrotas: <span id="derrotas">0</span></p>
+            <p>Empates: <span id="empates">0</span></p>
+            <p>Porcentaje de victorias: <span id="porcentajeVictorias">0%</span></p>
+        </div>
+        <button id="reiniciar">Reiniciar</button>
+    </div>
+    <script>
+        let victorias = 0;
+let derrotas = 0;
+let empates = 0;
+
+const opciones = ['piedra', 'papel', 'tijera'];
+
+// Asignar eventos a los botones
+document.getElementById('piedra').addEventListener('click', () => jugar('piedra'));
+document.getElementById('papel').addEventListener('click', () => jugar('papel'));
+document.getElementById('tijera').addEventListener('click', () => jugar('tijera'));
+document.getElementById('reiniciar').addEventListener('click', reiniciar);
+
+// Función para jugar una ronda
+function jugar(eleccionJugador) {
+    const dificultad = document.getElementById('dificultad').value;
+    const eleccionIA = elegirIA(dificultad, eleccionJugador);
+    let resultado = '';
+
+    // Lógica para determinar el ganador
+    if (eleccionJugador === eleccionIA) {
+        empates++;
+        resultado = '¡Es un empate!';
+    } else if (
+        (eleccionJugador === 'piedra' && eleccionIA === 'tijera') ||
+        (eleccionJugador === 'papel' && eleccionIA === 'piedra') ||
+        (eleccionJugador === 'tijera' && eleccionIA === 'papel')
+    ) {
+        victorias++;
+        resultado = '¡Ganaste!';
+    } else {
+        derrotas++;
+        resultado = '¡Perdiste!';
+    }
+
+    // Actualizar resultados en la interfaz
+    actualizarResultados(resultado, eleccionIA);
+}
+
+// Función para elegir la opción de IA según la dificultad
+function elegirIA(dificultad, eleccionJugador) {
+    if (dificultad === 'facil') {
+        return opciones[Math.floor(Math.random() * 3)];
+    } else if (dificultad === 'normal') {
+        // Dificultad normal: probabilidad de elegir la opción que gana, pero también aleatoriamente
+        return Math.random() < 0.5 ? opciones[Math.floor(Math.random() * 3)] : 
+               (eleccionJugador === 'piedra' ? 'papel' : 
+                eleccionJugador === 'papel' ? 'tijera' : 
+                'piedra');
+    } else {
+        // Dificultad difícil: la IA tiene un 10% de probabilidad de elegir aleatoriamente
+        if (Math.random() < 0.1) {
+            return opciones[Math.floor(Math.random() * 3)];
+        }
+        // De lo contrario, elige la opción que gana
+        if (eleccionJugador === 'piedra') return 'papel';
+        if (eleccionJugador === 'papel') return 'tijera';
+        if (eleccionJugador === 'tijera') return 'piedra';
+    }
+}
+
+// Función para actualizar los resultados
+function actualizarResultados(resultado, eleccionIA) {
+    document.getElementById('resultado').innerText = resultado;
+    document.getElementById('eleccionIA').innerText = `Elección de la IA: ${eleccionIA}`;
+    document.getElementById('victorias').innerText = victorias;
+    document.getElementById('derrotas').innerText = derrotas;
+    document.getElementById('empates').innerText = empates;
+
+    // Calcular porcentaje de victorias
+    const totalJuegos = victorias + derrotas + empates;
+    const porcentajeVictorias = totalJuegos > 0 ? ((victorias / totalJuegos) * 100).toFixed(2) : 0;
+    document.getElementById('porcentajeVictorias').innerText = `${porcentajeVictorias}%`;
+}
+
+// Función para reiniciar el juego
+function reiniciar() {
+    victorias = 0;
+    derrotas = 0;
+    empates = 0;
+    document.getElementById('resultado').innerText = '';
+    document.getElementById('eleccionIA').innerText = '';
+    document.getElementById('victorias').innerText = victorias;
+    document.getElementById('derrotas').innerText = derrotas;
+    document.getElementById('empates').innerText = empates;
+    document.getElementById('porcentajeVictorias').innerText = '0%';
+}
+    </script>
+</body>
+</html>

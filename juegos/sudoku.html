@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Juego de Sudoku</title>
+    <link rel="stylesheet" href="sudoku.css">
+</head>
+<body>
+    <h1>Sudoku</h1>
+    <div id="sudoku-container"></div>
+    <button id="check-button">Comprobar<span class="checkmark">✔</span></button>
+    <script>
+const sudokuContainer = document.getElementById('sudoku-container');
+const checkButton = document.getElementById('check-button');
+
+// Tablero de Sudoku inicial (0 representa una celda vacía)
+const board = [
+    [5, 3, 0, 0, 7, 0, 0, 0, 0],
+    [6, 0, 0, 1, 9, 5, 0, 0, 0],
+    [0, 9, 8, 0, 0, 0, 0, 6, 0],
+    [8, 0, 0, 0, 6, 0, 0, 0, 3],
+    [4, 0, 0, 8, 0, 3, 0, 0, 1],
+    [7, 0, 0, 0, 2, 0, 0, 0, 6],
+    [0, 6, 0, 0, 0, 0, 2, 8, 0],
+    [0, 0, 0, 4, 1, 9, 0, 0, 5],
+    [0, 0, 0, 0, 8, 0, 0, 7, 9]
+];
+
+// Crear el tablero en el DOM
+function createBoard() {
+    for (let row = 0; row < 9; row++) {
+        for (let col = 0; col < 9; col++) {
+            const input = document.createElement('input');
+            input.type = 'number';
+            input.min = '1';
+            input.max = '9';
+            input.value = board[row][col] !== 0 ? board[row][col] : '';
+            input.disabled = board[row][col] !== 0; // Deshabilitar celdas ya llenas
+            sudokuContainer.appendChild(input);
+        }
+    }
+}
+
+// Comprobar solución
+function checkSolution() {
+    const inputs = document.querySelectorAll('#sudoku-container input');
+    let isValid = true;
+
+    // Convertir inputs en un array de números
+    const userBoard = Array.from({ length: 9 }, (_, row) => 
+        Array.from({ length: 9 }, (_, col) => Number(inputs[row * 9 + col].value))
+    );
+
+    // Aquí puedes agregar la lógica para verificar si la solución es correcta
+    // Por simplicidad, solo se verifica si no hay ceros
+    userBoard.forEach(row => {
+        if (row.includes(0)) {
+            isValid = false;
+        }
+    });
+
+    alert(isValid ? "¡Solución correcta!" : "Hay errores en la solución.");
+}
+
+createBoard();
+
+checkButton.addEventListener('click', checkSolution);
+    </script>
+</body>
+</html>

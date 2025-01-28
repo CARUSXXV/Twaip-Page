@@ -1,0 +1,62 @@
+body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: #e3f2fd;
+    font-family: 'Roboto', sans-serif;
+    height: 100vh;
+    margin: 0;
+}
+
+.game-container {
+    text-align: center;
+    padding: 5px;
+    background-color: #ffffff;
+    border-radius: 15px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+
+canvas {
+    background-color: #000;
+    display: block;
+    margin: 20px auto;
+    border: 2px solid #00796b; 
+    border-radius: 10px; 
+    margin-left: 10px;
+    margin-right: 10px;
+}
+
+label, select, button {
+    margin: 10px;
+    font-size: 1.1em; 
+}
+
+label {
+    color: #333; 
+}
+
+select {
+    padding: 8px;
+    border-radius: 5px; 
+    border: 1px solid #00796b; 
+    background-color: #f9f9f9; 
+}
+
+button {
+    padding: 10px 20px;
+    background-color: #00796b; 
+    color: white; 
+    border: none; 
+    border-radius: 5px; 
+    cursor: pointer; 
+    transition: background-color 0.3s, transform 0.2s; 
+}
+
+button:hover {
+    background-color: #004d40; 
+    transform: scale(1.05); 
+}
+
+button:active {
+    transform: scale(0.95); 
+}

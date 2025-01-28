@@ -1,0 +1,110 @@
+body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    font-family: 'Arial', sans-serif;
+    background-color: #f9f9f9;
+    margin: 0;
+    padding: 20px;
+}
+
+h1 {
+    color: #2c3e50; 
+    margin-bottom: 20px; 
+}
+
+p {
+    color: #34495e; 
+    font-size: 16px; 
+}
+
+#movimientos {
+    font-weight: bold; 
+}
+
+#esTurno {
+    margin-bottom: 20px; 
+}
+
+canvas {
+    border: 2px solid #2c3e50; 
+    margin-bottom: 20px; 
+}
+
+input[type="button"] {
+    background-color: #3498db; 
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 10px 15px;
+    cursor: pointer;
+    transition: background-color 0.3s ease; 
+    margin-right: 10px; 
+}
+
+input[type="button"]:hover {
+    background-color: #2980b9; 
+}
+
+hr {
+    width: 100%; 
+    max-width: 600px; 
+    border: 1px solid #ccc; 
+    margin: 20px 0; 
+}
+
+#moveBlancas, #moveNegras {
+    width: 200px;
+    padding: 15px;
+    background-color: #c5f8ed; 
+    border-radius: 8px; 
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); 
+    margin-top: 20px; 
+}
+
+#moveBlancas h3, #moveNegras h3 {
+    text-align: center; 
+}
+
+label {
+    font-size: 14px; 
+}
+
+#empateButton {
+    background-color: #e67e22;
+    margin-top: 20px; 
+}
+
+#empateButton:hover {
+    background-color: #d35400; 
+}
+
+
+.alert {
+    color: red;
+}
+
+
+#loadButton {
+margin-top: 10px;
+}
+
+#saveButton {
+margin-top: 10px;
+}
+
+#info {
+    position: absolute;
+    top: 0; 
+    left: 0; 
+    background-color: rgba(255, 255, 255, 0); 
+    padding: 10px; 
+    border-radius: 5px; 
+    margin-top: 15px;
+    margin-left: 15px;
+}
+
+#info p {
+text-align: center;
+}
+

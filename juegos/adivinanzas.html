@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Juego de Adivinanzas</title>
+    <link rel="stylesheet" href="estilosadivinanzas.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Adivina la Adivinanza</h1>
+        <label for="difficulty">Selecciona la dificultad:</label>
+        <select id="difficulty">
+            <option value="easy">Fácil</option>
+            <option value="medium">Normal</option>
+            <option value="hard">Difícil</option>
+        </select>
+        <div id="riddleContainer" style="display: none;">
+            <p id="riddle"></p>
+            <input type="text" id="answerInput" placeholder="Escribe tu respuesta" />
+            <button id="submitAnswer">Enviar Respuesta</button>
+            <button id="nextRiddle">Siguiente Adivinanza</button>
+        </div>
+        <p id="message"></p>
+        <p>Intentos: <span id="attempts">0</span></p>
+    </div>
+
+    <script>
+        const riddles = {
+    easy: [
+        { question: "Blanca por dentro, verde por fuera. Si quieres que te lo diga, espera.", answer: "pera" },
+        { question: "Nace en el agua, en ella reside; si se seca, muere, pero siempre vive.", answer: "pez" },
+        { question: "Cien años de vida tengo, y no puedo andar. Si me tocas, me quemo y no puedo hablar.", answer: "vela" },
+        { question: "Soy algo que no se puede ver, pero si me miras me puedes perder.", answer: "tiempo" },
+        { question: "Cae al agua y no se moja. ¿Qué es?", answer: "sombra" },
+        { question: "Tengo agujas y no sé coser. ¿Qué soy?", answer: "reloj" },
+        { question: "Cuanto más le quitas, más grande se vuelve. ¿Qué es?", answer: "agujero" },
+        { question: "Largo como un tren, corto como un ratón. ¿Qué es?", answer: "hilo" },
+        { question: "Dos en uno, uno en dos. ¿Qué son?", answer: "ojos" },
+        { question: "En la tierra nacen, en el aire viven y en el agua mueren. ¿Qué son?", answer: "nubes" },
+    ],
+    medium: [
+        { question: "Te la digo te la digo te la vuelvo a repetir, te la digo mil veces y no la sabes decir", answer: "tela" },
+        { question: "No es un pez, pero vive en el mar; no tiene patas, pero puede caminar. ¿Qué es?", answer: "pulpo" },
+        { question: "Soy bonito por delante y algo feo por detrás, me transformo a cada instante ya que imito a los demás. ¿Sabes quién soy?", answer: "espejo" },
+        { question: "Verde por fuera o rojo por dentro; si te lo comes, te hace llorar.", answer: "aji" },
+        { question: "A veces viene en forma de lluvia; a veces viene en forma de nieve. ¿Qué es?", answer: "agua" },
+        { question: "No tiene boca y habla; no tiene ojos y llora. ¿Qué es?", answer: "nube" },
+        { question: "Si lo nombro, desaparece. ¿Qué es?", answer: "silencio" },
+        { question: "Es redondo como una pelota y brilla como el sol; si lo miras fijamente, te ciega su luz.", answer: "estrella" },
+        { question: "No se puede ver ni tocar, pero está presente en todas partes. ¿Qué es?", answer: "aire" },
+        { question: "Ya ves, ya ves, tan claro que es y no me la adivinas de aquí a un mes.", answer: "llaves" }
+    ],
+    hard: [
+        { question: "Vengo de padres cantores, pero yo no soy cantor, llevo la ropa blanca y amarillo el corazón. ¿Quién soy?", answer: "huevo" },
+        { question: "Tengo corona y no soy reina tengo cien ojos y no puedo ver ¿Qué soy?​", answer: "piña" },
+        { question: "Tengo ojos grandes pero no veo bien de noche. Vuelo sin ser pájaro. ¿Quién soy?", answer: "buho" },
+        { question: "Adivina, adivinanza; si miedo sientes de mí, enfréntame con confianza, y verás que no hay por qué huir.", answer: "miedo" },
+        { question: "En la noche brillo sin ser estrella; durante el día soy invisible.", answer: "luna" },
+        { question: "Soy un número que nunca termina, en tu vida diaria siempre me adivinas. En cada rincón, en cada ocasión, soy parte de ti, en cada acción.", answer: "1" },
+        { question: "No tengo cuerpo ni alma; y sin ser real, puedo hacerte sentir cosas tanto bien como mal.", answer: "sentimiento" },
+        { question: "Soy más ligero que la pluma al volar, y más pesado que montañas sin par. Si intento sostenerme, no puedo aguantar, al final en el suelo me verás caer sin dudar.", answer: "aliento" },
+        { question: "Nadie me ve ni me toca; sin embargo, todos saben que existo.", answer:"tiempo"}
+    ]
+};
+
+let currentRiddleIndex = 0;
+let attempts = 0;
+let currentDifficulty = 'easy';
+
+const riddleElement = document.getElementById('riddle');
+const difficultySelector = document.getElementById('difficulty');
+const answerInput = document.getElementById('answerInput');
+const submitAnswerButton = document.getElementById('submitAnswer');
+const nextRiddleButton = document.getElementById('nextRiddle');
+const messageDisplay = document.getElementById('message');
+const attemptsDisplay = document.getElementById('attempts');
+
+difficultySelector.addEventListener('change', () => {
+    currentDifficulty = difficultySelector.value;
+    currentRiddleIndex = 0;
+    loadRiddle();
+});
+
+function loadRiddle() {
+    const selectedRiddles = riddles[currentDifficulty];
+    
+    if (currentRiddleIndex < selectedRiddles.length) {
+        riddleElement.textContent = selectedRiddles[currentRiddleIndex].question;
+        riddleElement.parentNode.style.display = 'block'; // Muestra el contenedor de adivinanzas
+        answerInput.value = '';
+        messageDisplay.textContent = '';
+        attempts = 0; // Reinicia el contador de intentos
+        attemptsDisplay.textContent = attempts; // Actualiza la visualización de intentos
+        nextRiddleButton.style.display = 'none'; // Oculta el botón de siguiente
+        submitAnswerButton.style.display = 'inline'; // Muestra el botón de enviar
+    } else {
+        riddleElement.textContent = '¡Has completado todas las adivinanzas!';
+        submitAnswerButton.style.display = 'none';
+        nextRiddleButton.style.display = 'none';
+    }
+}
+
+submitAnswerButton.addEventListener('click', () => {
+    const userAnswer = answerInput.value.toLowerCase().trim();
+    const selectedRiddles = riddles[currentDifficulty];
+    
+    if (userAnswer === selectedRiddles[currentRiddleIndex].answer) {
+        messageDisplay.textContent = '¡Correcto! Muy bien hecho.';
+        nextRiddleButton.style.display = 'inline'; // Muestra el botón de siguiente
+        submitAnswerButton.style.display = 'none'; // Oculta el botón de enviar
+    } else {
+        attempts++;
+        messageDisplay.textContent = 'Incorrecto. Intenta de nuevo.';
+        attemptsDisplay.textContent = attempts; // Actualiza el contador de intentos
+    }
+});
+
+nextRiddleButton.addEventListener('click', () => {
+    currentRiddleIndex++;
+    loadRiddle();
+});
+
+// Carga la primera adivinanza al iniciar
+loadRiddle();
+    </script>
+</body>
+</html>

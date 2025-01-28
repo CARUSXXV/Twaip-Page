@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Juego de Trivia</title>
+    <link rel="stylesheet" href="estilostrivia.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Juego de Trivia</h1>
+        <div id="category-selection">
+            <h2>Selecciona una categoría:</h2>
+            <button onclick="startGame('ciencia')">Ciencia</button>
+            <button onclick="startGame('animales')">Animales</button>
+            <button onclick="startGame('anime')">Anime</button>
+            <button onclick="startGame('gastronomia')">Gastronomía</button>
+            <button onclick="startGame('videojuegos')">Videojuegos</button>
+        </div>
+        <div id="quiz" class="hidden">
+            <h2 id="question"></h2>
+            <div id="options"></div>
+            <button id="next" class="hidden" onclick="nextQuestion()">Siguiente</button>
+        </div>
+        <div id="result" class="hidden">
+            <h2>Resultado</h2>
+            <p id="score"></p>
+            <button onclick="resetGame()">Jugar de nuevo</button>
+        </div>
+    </div>
+    <script>
+        const questions = {
+    ciencia: [
+        { question: "¿Cuál es la fórmula química del agua?", options: ["H2O", "CO2", "O2", "NaCl"], answer: "H2O" },
+        { question: "¿Qué planeta es conocido como el planeta rojo?", options: ["Tierra", "Marte", "Júpiter", "Saturno"], answer: "Marte" },
+        { question: "¿Qué gas respiramos principalmente?", options: ["Oxígeno", "Nitrógeno", "Dióxido de carbono", "Helio"], answer: "Oxígeno" },
+        { question: "¿Cuál es la unidad básica de la vida?", options: ["Célula", "Tejido", "Órgano", "Sistema"], answer: "Célula" },
+        { question: "¿Qué órgano del cuerpo humano bombea sangre?", options: ["Hígado", "Riñón", "Corazón", "Pulmón"], answer: "Corazón" },
+        { question: "¿Qué teoría explica el origen del universo?", options: ["Teoría de la relatividad", "Teoría del Big Bang", "Teoría de cuerdas", "Teoría de la evolución"], answer: "Teoría del Big Bang" },
+        { question: "¿Cuál es el elemento más abundante en el universo?", options: ["Hidrógeno", "Helio", "Oxígeno", "Carbono"], answer: "Hidrógeno" },
+        { question: "¿Qué tipo de energía es la solar?", options: ["Renovable", "No renovable", "Química", "Nuclear"], answer: "Renovable" },
+        { question: "¿Cuál es el planeta más grande del sistema solar?", options: ["Tierra", "Marte", "Júpiter", "Saturno"], answer: "Júpiter" },
+        { question: "¿Qué tipo de animal es un delfín?", options: ["Pez", "Reptil", "Mamífero", "Anfibio"], answer: "Mamífero" },
+        { question: "¿Cuál es la principal fuente de energía para la Tierra?", options: ["El sol", "El viento", "El agua", "La geotermia"], answer: "El sol" },
+        { question: "¿Qué partícula subatómica tiene carga positiva?", options: ["Electrón", "Neutrón", "Protón", "Quark"], answer: "Protón" },
+        { question: "¿Qué fenómeno natural se mide en Richter?", options: ["Terremotos", "Huracanes", "Tsunamis", "Inundaciones"], answer: "Terremotos" }
+    ],
+    animales: [
+        { question: "¿Cuál es el mamífero más grande del mundo?", options: ["Elefante", "Ballena Azul", "Tiburón", "Rinoceronte"], answer: "Ballena Azul" },
+        { question: "¿Qué animal es conocido como el rey de la selva?", options: ["León", "Tigre", "Elefante", "Cebra"], answer: 'León' },
+        { question: '¿Cuál es el ave que no puede volar y es originaria de Nueva Zelanda?', options:['Pingüino', 'Kiwi', 'Avestruz', 'Cóndor'], answer:'Kiwi'},
+        { question:'¿Qué animal tiene la lengua más larga en relación a su cuerpo?', options:['Rana', 'Giraffe', 'Chinchilla', 'Camaleón'], answer:'Camaleón'},
+        { question:'¿Cuál es el único mamífero capaz de volar?', options:['Murciélago', 'Colibrí', 'Pájaro', 'Mariposa'], answer:'Murciélago'},
+        { question:'¿Qué animal puede cambiar de color para camuflarse?', options:['Camaleón', 'Lobo', 'Serpiente', 'Perro'], answer:'Camaleón'},
+        { question:'¿Cuál es el pez más grande del mundo?', options:['Tiburón blanco', 'Ballena azul', 'Mero gigante', 'Esturión'], answer:'Ballena azul'},
+        { question:'¿Qué insecto puede vivir semanas sin cabeza?', options:['Hormiga', 'Cucaracha', 'Mosca', 'Termita'], answer:'Cucaracha'},
+        { question:'¿Cuál es el único marsupial que vive en América del Norte?', options:['Koala', 'Canguro', 'Oposum', 'Wallaby'], answer:'Oposum'},
+        { question:'¿Cómo se llama la cría de un caballo?', options:['Potro', 'Cabrito', 'Cachorro', 'Gatito'], answer:'Potro'},
+        { question:'¿Cuál es el animal terrestre más rápido?', options:['Guepardo', 'León', 'Antílope', 'Caballo'], answer:'Guepardo'},
+        { question:'¿Qué animal tiene un corazón que late a una velocidad de 1,200 latidos por minuto?', options:['Ratón','Elefante','Tortuga','Perro'], answer:'Ratón'},
+        { question:'¿Cuál es el mamífero más pequeño del mundo?', options:['Musaraña','Murciélago','Rata','Ratón'], answer:'Musaraña'}
+    ],
+    anime: [
+        { question: '¿Cuál es el nombre del protagonista de Naruto?', options:['Sasuke','Naruto','Sakura','Kakashi'], answer:'Naruto'},
+        { question:'¿Qué anime trata sobre un mundo donde los humanos son devorados por titanes?', options:['Death Note','Attack on Titan','One Piece','Dragon Ball'], answer:'Attack on Titan'},
+        { question:'En Dragon Ball, ¿quién es el maestro de Goku?', options:['Krillin','Piccolo','Kame Sennin','Vegeta'], answer:'Kame Sennin'},
+        {question:"En One Piece, ¿cuál es el sueño de Luffy?",options:["Convertirse en Rey de los Piratas","Encontrar un tesoro","Viajar por todo el mundo","Ser el mejor espadachín"],answer:"Convertirse en Rey de los Piratas"},
+        {question:"En My Hero Academia, ¿qué poder tiene Deku al principio?",options:["Super fuerza","Telequinesis","Ninguno","Vuelo"],answer:"Ninguno"},
+        {question:"En Death Note, ¿quién es el dueño del cuaderno que mata personas?",options:["Light Yagami","L","Misa Amane","Ryuk"],answer:"Light Yagami"},
+        {question:"En Fullmetal Alchemist, ¿qué buscan los hermanos Elric?",options:["La piedra filosofal","El conocimiento absoluto","La inmortalidad","La paz mundial"],answer:"La piedra filosofal"},
+        {question:"En Sword Art Online, ¿qué tipo de juego es SAO?",options:["Juego de rol","Juego de estrategia","Juego de cartas","Juego de simulación"],answer:"Juego de rol"},
+        {question:"En Demon Slayer, ¿qué usa Tanjiro para luchar contra demonios?",options:["Espadas","Armas de fuego","Magia","Tecnología avanzada"],answer:"Espadas"},
+        {question:"En Fairy Tail, ¿qué tipo de magia usa Natsu Dragneel?",options:["Magia del fuego","Magia del hielo","Magia del viento","Magia del agua"],answer:"Magia del fuego"},
+        {question:"En Hunter x Hunter, ¿qué tipo de habilidades tienen los cazadores?",options:["Superpoderes","Habilidades especiales","Tecnología avanzada","Ninguna"],answer:"Habilidades especiales"},
+        {question:"En Tokyo Ghoul, ¿qué le sucede a Kaneki al principio?",options:["Se convierte en ghoul","Muere","Se vuelve humano","Se convierte en héroe"],answer:"Se convierte en ghoul"},
+        {question:"En One Punch Man, ¿quién es conocido como el héroe más fuerte?",options:["Saitama","Genos","Mumen Rider","Garou"],answer:"Saitama"}
+    ],
+    gastronomia:[
+      {question:"¿Cuál es el plato nacional de España?",options:["Pizza","Paella","Sushi","Tacos"],answer:"Paella"},
+      {question:"¿Qué fruta es conocida por tener muchas semillas en su exterior?",options:["Fresa","Manzana","Plátano","Naranja"],answer:"Fresa"},
+      {question:"¿De qué país proviene la pizza?",options:["Italia","Francia","México","Grecia"],answer:"Italia"},
+      {question:"¿Cuál es el ingrediente principal del guacamole?",options:["Aguacate","Tomate","Cebolla","Pimiento"],answer:"Aguacate"},
+      {question:"¿Qué tipo de pasta se utiliza para hacer lasaña?",options:["Espagueti","Fusilli","Lasaña (planchas)","Macarrones"],answer:"Lasaña (planchas)"},
+      {question:"¿Cuál es la bebida nacional de Argentina?",options:["Mate","Cerveza","Vino tinto","Fernet"],answer:"Mate"},
+      {question:"¿Qué tipo de carne se utiliza para hacer un kebab tradicionalmente?",options:["Pollo","Cordero","Cerdo","Res"],answer:"Cordero"},
+      {question:"¿Cómo se llama la salsa hecha a base de mayonesa y mostaza que se usa en hot dogs y hamburguesas en EE.UU.?",options:["Ketchup","Salsa BBQ","Salsa especial (secret sauce) ","Salsa tártara"],answer:"Salsa especial (secret sauce)"},
+      {question:"¿Cuál es la especia más cara del mundo por peso?",options:["Azafrán ","Vainilla ","Pimienta negra ","Canela,"],answer:"Azafrán"},
+      {question:"En qué país se originó el sushi?",options:["Japón ","China ","Corea ","Tailandia,"],answer:"Japón"},
+      {question:"¿Qué bebida se obtiene fermentando arroz y agua?", options:["Sake",  "Cerveza ",  "Vino ",  "Sidra "], answer:"Sake"}, 
+      {question:"¿Cuál es el plato nacional de Italia?", options:["Pizza", "Pasta", "Risotto", "Lasagna"], answer:"Pizza"},
+{question:"¿Qué ingrediente principal se utiliza para hacer el sushi?", options:["Arroz", "Pescado", "Alga nori", "Verduras"], answer:"Arroz"},
+{question:"¿Qué tipo de carne se utiliza tradicionalmente en un asado argentino?", options:["Pollo", "Cerdo", "Res", "Cordero"], answer:"Res"},
+{question:"¿Cuál es la bebida alcohólica típica de México hecha a base de agave?", options:["Tequila", "Mezcal", "Pulque", "Ron"], answer:"Tequila"}
+    ],
+    videojuegos:[
+   {question:"¿Cuál es el videojuego más vendido de todos los tiempos?",options:["Minecraft","Tetris ","GTA V ","Wii Sports"],answer:"Minecraft"},
+   {question:"¿Qué consola fue lanzada por primera vez por Nintendo en 1983?",options:["SNES ","NES ","GameCube ","Wii U"],answer:"NES"},
+   {question:"En qué año se lanzó Fortnite Battle Royale?",options:["2015 ","2016 ","2017 ","2018"],answer:"2017"},
+   {question:"¿Cuál es el personaje principal en The Legend of Zelda?",options:["Link ","Zelda ","Ganondorf ","Navi"],answer:"Link"},
+   {question:"¿Qué videojuego populariza los battle royale con hasta 100 jugadores en una sola partida ?",options:["PUBG ","Fortnite ","Call of Duty ","Apex Legends"],answer :"PUBG"},
+   {question:"¿Qué juego de rol fue desarrollado por CD Projekt Red y se basa en un mundo de fantasía creado por Andrzej Sapkowski?", options:["The Witcher 3: Wild Hunt", "Skyrim", "Dark Souls", "Dragon Age"], answer:"The Witcher 3: Wild Hunt"},
+{question:"¿Cuál es el juego de simulación de vida donde puedes construir y personalizar tu hogar y socializar con otros personajes?", options:["The Sims", "Animal Crossing", "Stardew Valley", "Harvest Moon"], answer:"The Sims"},
+{question:"¿Qué juego de plataformas presenta a un fontanero que debe rescatar a una princesa secuestrada por un dragón?", options:["Super Mario Bros.", "Sonic the Hedgehog", "Donkey Kong", "Mega Man"], answer:"Super Mario Bros."},
+{question:"¿Cuál es el nombre del famoso juego de construcción donde los jugadores pueden crear y explorar mundos hechos de bloques?", options:["Minecraft", "Terraria", "Roblox", "Fortnite"], answer:"Minecraft"},
+{question:"¿Qué franquicia de videojuegos presenta un universo donde los jugadores pueden capturar criaturas llamadas Pokémon?", options:["Pokémon", "Digimon", "Monster Hunter", "Yu-Gi-Oh!"], answer:"Pokémon"},
+{question:"¿En qué juego los jugadores luchan entre sí en equipos para destruir la base del enemigo mientras defienden la suya?", options:["League of Legends", "Dota 2", "Overwatch", "Counter-Strike"], answer:"League of Legends"},
+{question:"¿Cuál es el nombre del videojuego que se desarrolla en un mundo post-apocalíptico lleno de zombies, creado por Naughty Dog?", options:["The Last of Us", "Resident Evil", "Days Gone", "Dying Light"], answer:"The Last of Us"},
+{question:"¿Qué juego de carreras es conocido por su realismo y fue desarrollado por Polyphony Digital para PlayStation?", options:["Forza Motorsport", "Gran Turismo", "Need for Speed", "Burnout"], answer:"Gran Turismo"},
+{question:"¿Cuál es el título del videojuego que sigue las aventuras de un cazador de demonios llamado Dante?", options:["Devil May Cry", "Bayonetta", "Dark Souls", "Bloodborne"], answer:"Devil May Cry"},
+{question:"¿Qué juego multijugador permite a los jugadores construir estructuras y luchar contra otros en un mundo abierto?", options:["Fortnite","Apex Legends","Call of Duty","Battlefield"], answer:"Fortnite"}
+]
+};
+
+let currentCategory = '';
+let currentQuestionIndex = 0;
+let score = 0;
+
+function startGame(category) {
+    currentCategory = category;
+    currentQuestionIndex = 0;
+    score = 0;
+    document.getElementById('category-selection').classList.add('hidden');
+    document.getElementById('quiz').classList.remove('hidden');
+    showQuestion();
+}
+
+function showQuestion() {
+    const questionData = questions[currentCategory][currentQuestionIndex];
+    document.getElementById('question').innerText = questionData.question;
+    const optionsDiv = document.getElementById('options');
+    optionsDiv.innerHTML = '';
+    questionData.options.forEach(option => {
+        const button = document.createElement('div');
+        button.classList.add('option');
+        button.innerText = option;
+        button.onclick = () => selectOption(option);
+        optionsDiv.appendChild(button);
+    });
+}
+
+function selectOption(selected) {
+    const questionData = questions[currentCategory][currentQuestionIndex];
+    if (selected === questionData.answer) {
+        score++;
+    }
+    document.getElementById('next').classList.remove('hidden');
+}
+
+function nextQuestion() {
+    currentQuestionIndex++;
+    if (currentQuestionIndex < questions[currentCategory].length) {
+        showQuestion();
+        document.getElementById('next').classList.add('hidden');
+    } else {
+        showResult();
+    }
+}
+
+function showResult() {
+    document.getElementById('quiz').classList.add('hidden');
+    document.getElementById('result').classList.remove('hidden');
+    
+    let knowledgeLevel;
+    
+    if (score <= questions[currentCategory].length * 0.4) {
+       knowledgeLevel = 'Bajo conocimiento';
+    } else if (score <= questions[currentCategory].length * 0.7) {
+       knowledgeLevel = 'Conocimiento medio';
+    } else {
+       knowledgeLevel = 'Alto conocimiento';
+   }
+
+   document.getElementById('score').innerText = `Tu puntaje es: ${score}/${questions[currentCategory].length}. Nivel de conocimiento: ${knowledgeLevel}`;
+}
+
+function resetGame() {
+    document.getElementById('result').classList.add('hidden');
+    document.getElementById('category-selection').classList.remove('hidden');
+}
+    </script>
+</body>
+</html>

@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Buscaminas</title>
+    <link rel="stylesheet" href="buscaminas.css">
+</head>
+<body>
+    <div class="instructions-panel">
+        <h2>Instrucciones</h2>
+        <p>¡Bienvenido a una partida clásica de buscaminas! A continuación están las instrucciones:</p>
+        <ul>
+            <li>Haga click en el espacio o bloque que desea descubrir.</li>
+            <li>Para dejar una bandera o bloque de referencia haga click derecho.</li>
+            <li>Cuando desee jugar de nuevo o reiniciar la partida, refresque la página.</li>
+            <li>¡Buena suerte!</li>
+        </ul>
+    </div>
+    <h1>Buscaminas</h1>
+    <div id="game"></div>
+    <script>
+const grid = document.getElementById('game');
+const size = 10;
+const minesCount = 20;
+let cells = [];
+let mines = [];
+
+function createBoard() {
+    for (let i = 0; i < size; i++) {
+        cells[i] = [];
+        for (let j = 0; j < size; j++) {
+            const cell = document.createElement('div');
+            cell.classList.add('cell');
+            cell.dataset.row = i;
+            cell.dataset.col = j;
+            cell.addEventListener('click', revealCell);
+            cell.addEventListener('contextmenu', flagCell);
+            grid.appendChild(cell);
+            cells[i][j] = cell;
+        }
+    }
+    placeMines();
+    calculateNumbers();
+}
+
+function placeMines() {
+    let placedMines = 0;
+    while (placedMines < minesCount) {
+        const row = Math.floor(Math.random() * size);
+        const col = Math.floor(Math.random() * size);
+        if (!mines.includes(`${row},${col}`)) {
+            mines.push(`${row},${col}`);
+            cells[row][col].dataset.mine = true;
+            placedMines++;
+        }
+    }
+}
+
+function calculateNumbers() {
+    for (let i = 0; i < size; i++) {
+        for (let j = 0; j < size; j++) {
+            if (!cells[i][j].dataset.mine) {
+                let count = 0;
+                for (let x = -1; x <= 1; x++) {
+                    for (let y = -1; y <= 1; y++) {
+                        const newRow = i + x;
+                        const newCol = j + y;
+                        if (newRow >= 0 && newRow < size && newCol >= 0 && newCol < size && cells[newRow][newCol].dataset.mine) {
+                            count++;
+                        }
+                    }
+                }
+                cells[i][j].dataset.count = count;
+            }
+        }
+    }
+}
+
+function revealCell(event) {
+    const cell = event.target;
+    if (cell.classList.contains('revealed') || cell.classList.contains('flag')) return;
+
+    cell.classList.add('revealed');
+    if (cell.dataset.mine) {
+        cell.classList.add('mine');
+        alert('¡Perdiste! Has encontrado una mina.');
+        revealAllMines();
+    } else {
+        const count = cell.dataset.count;
+        if (count > 0) {
+            cell.textContent = count;
+        } else {
+            revealAdjacentCells(cell);
+        }
+    }
+}
+
+function revealAdjacentCells(cell) {
+    const row = parseInt(cell.dataset.row);
+    const col = parseInt(cell.dataset.col);
+    for (let x = -1; x <= 1; x++) {
+        for (let y = -1; y <= 1; y++) {
+            const newRow = row + x;
+            const newCol = col + y;
+            if (newRow >= 0 && newRow < size && newCol >= 0 && newCol < size) {
+                const adjacentCell = cells[newRow][newCol];
+                if (!adjacentCell.classList.contains('revealed') && !adjacentCell.classList.contains('flag')) {
+                    adjacentCell.classList.add('revealed');
+                    if (adjacentCell.dataset.mine) {
+                        adjacentCell.classList.add('mine');
+                    } else {
+                        const count = adjacentCell.dataset.count;
+                        if (count > 0) {
+                            adjacentCell.textContent = count;
+                        } else {
+                            revealAdjacentCells(adjacentCell);
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+function flagCell(event) {
+    event.preventDefault();
+    const cell = event.target;
+    if (cell.classList.contains('revealed')) return;
+
+    if (cell.classList.contains('flag')) {
+        cell.classList.remove('flag');
+    } else {
+        cell.classList.add('flag');
+    }
+}
+
+function revealAllMines() {
+    for (const mine of mines) {
+        const [row, col] = mine.split(',').map(Number);
+        cells[row][col].classList.add('revealed', 'mine');
+    }
+}
+
+createBoard();
+
+    </script>
+</body>
+</html>

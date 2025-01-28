@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Juego de Palabras</title>
+    <link rel="stylesheet" href="estilosjuegopalabras.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Juego de Palabras</h1>
+        <div id="instrucciones">
+            <h2>Instrucciones:</h2>
+            <p>Utiliza las letras proporcionadas para formar palabras reales válidas. Cada letra cuenta como un punto.</p>
+            <p>El juego dura 30 segundos. ¡Intenta formar tantas palabras como puedas!</p>
+            <button id="iniciar">Iniciar Juego</button>
+        </div>
+        <div id="juego" style="display: none;">
+            <div id="letras"></div>
+            <input type="text" id="entrada" placeholder="Escribe una palabra..." />
+            <button id="verificar">Verificar</button>
+            <div id="resultado"></div>
+            <h2>Palabras Formadas:</h2>
+            <ul id="palabras-formadas"></ul>
+            <h3>Puntuación: <span id="puntuacion">0</span></h3>
+            <h3>Tiempo Restante: <span id="temporizador">30</span> segundos</h3>
+            <button id="reiniciar">Reiniciar Juego</button>
+        </div>
+    </div>
+    <script>
+        const letras = ['A', 'E', 'O', 'R', 'S', 'T', 'L'];
+const palabrasValidas = [
+    'ALERTA', 'SALTO', 'SOL', 'ROSA', 'TOS', 'RASTRE', 'REAL', 'TOLERAR', 'SOLA', 'TELA', 
+    'LEER', 'ARTES', 'ARO', 'SOLA', 'OSAR', 'TRES', 'RATOS', 'RATON', 'LORO', 'TASAR'
+];
+let palabrasFormadas = [];
+let puntuacion = 0;
+let tiempoRestante = 30;
+let temporizador;
+
+document.getElementById('letras').innerText = letras.join(', ');
+
+document.getElementById('iniciar').addEventListener('click', () => {
+    iniciarJuego();
+});
+
+function iniciarJuego() {
+    document.getElementById('instrucciones').style.display = 'none';
+    document.getElementById('juego').style.display = 'block';
+    palabrasFormadas = [];
+    puntuacion = 0;
+    tiempoRestante = 30;
+    clearInterval(temporizador);
+    document.getElementById('resultado').innerText = '';
+    document.getElementById('palabras-formadas').innerHTML = '';
+    document.getElementById('entrada').value = '';
+    document.getElementById('puntuacion').innerText = puntuacion;
+    document.getElementById('temporizador').innerText = tiempoRestante;
+    document.getElementById('verificar').disabled = false;
+    document.getElementById('letras').innerText = letras.join(', ');
+    iniciarTemporizador();
+}
+
+document.getElementById('verificar').addEventListener('click', () => {
+    const entrada = document.getElementById('entrada').value.toUpperCase();
+    if (palabrasValidas.includes(entrada) && !palabrasFormadas.includes(entrada)) {
+        palabrasFormadas.push(entrada);
+        puntuacion += entrada.length; // Puntos por cada letra de la palabra
+        document.getElementById('resultado').innerText = '¡Palabra válida!';
+        actualizarLista();
+        actualizarPuntuacion();
+    } else {
+        document.getElementById('resultado').innerText = 'Palabra inválida o ya formada.';
+    }
+    document.getElementById('entrada').value = '';
+});
+
+function actualizarLista() {
+    const lista = document.getElementById('palabras-formadas');
+    lista.innerHTML = '';
+    palabrasFormadas.forEach(palabra => {
+        const li = document.createElement('li');
+        li.innerText = palabra;
+        lista.appendChild(li);
+    });
+}
+
+function actualizarPuntuacion() {
+    document.getElementById('puntuacion').innerText = puntuacion;
+}
+
+function iniciarTemporizador() {
+    temporizador = setInterval(() => {
+        tiempoRestante--;
+        document.getElementById('temporizador').innerText = tiempoRestante;
+        if (tiempoRestante <= 0) {
+            clearInterval(temporizador);
+            alert('¡Tiempo agotado! Tu puntuación final es: ' + puntuacion);
+            document.getElementById('verificar').disabled = true;
+        }
+    }, 1000);
+}
+
+document.getElementById('reiniciar').addEventListener('click', () => {
+    iniciarJuego();
+});
+
+// Iniciar el temporizador al cargar el juego
+// Ya no se inicia automáticamente, se inicia al hacer clic en "Iniciar Juego"
+    </script>
+</body>
+</html>

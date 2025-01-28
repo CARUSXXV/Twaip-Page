@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Juego de Laberinto</title>
+    <link rel="stylesheet" href="laberinto.css">
+</head>
+<body>
+    <div class="container">
+        <h1>¡Encuentra la salida del laberinto!</h1>
+        <canvas id="mazeCanvas" width="800" height="800"></canvas>
+        <button id="startButton">Comenzar</button>
+    </div>
+    <script>
+        // script.js
+const canvas = document.getElementById('mazeCanvas');
+const ctx = canvas.getContext('2d');
+
+const levels = [
+    [
+        [1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+        [1, 0, 0, 0, 1, 0, 0, 0, 0, 1],
+        [1, 0, 1, 0, 1, 0, 1, 1, 0, 1],
+        [1, 0, 1, 0, 0, 0, 0, 1, 0, 1],
+        [1, 0, 1, 1, 1, 1, 0, 1, 0, 1],
+        [1, 0, 0, 0, 0, 1, 0, 0, 0, 1],
+        [1, 1, 1, 1, 0, 1, 1, 1, 1, 1],
+        [1, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+        [1, 1, 1, 1, 1, 1, 1, 1, 0, 1],
+        [1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+    ],
+    [
+    [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+    [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+    [1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1],
+    [1, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1],
+    [1, 0, 1, 0, 1, 1, 1, 1, 1, 1, 0, 1, 0, 1],
+    [1, 0, 1, 0, 1, 0, 0, 0, 0, 1, 0, 1, 0, 1],
+    [1, 0, 1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 0, 1],
+    [1, 0, 1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 0, 1],
+    [1, 0, 1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 0, 1],
+    [1, 0, 1, 0, 1, 0, 1, 1, 1, 1, 0, 1, 0, 1],
+    [1, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1],
+    [1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1],
+    [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+    [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+],
+
+[
+    [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+    [1, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 0, 1],
+    [1, 0, 1, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1],
+    [1, 0, 1, 0, 0, 0, 0, 1, 1, 1, 0, 1, 1, 1],
+    [1, 0, 1, 1, 1, 1, 0, 0, 0, 1, 0, 1, 0, 1],
+    [1, 0, 1, 0, 0, 1, 0, 1, 1, 1, 0, 1, 0, 1],
+    [1, 0, 1, 0, 1, 1, 1, 1, 0, 1, 0, 1, 0, 1],
+    [1, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1],
+    [1, 0, 1, 1, 1, 1, 1, 1, 0, 1, 0, 1, 0, 1],
+    [1, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0, 1],
+    [1, 0, 1, 1, 1, 1, 0, 1, 0, 1, 0, 0, 0, 1],
+    [1, 0, 0, 0, 0, 1, 0, 0, 0, 1, 1, 1, 0, 1],
+    [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1],
+    [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+],
+  
+
+];
+
+const start = { x: 1, y: 1 };
+const end = { x: 8, y: 8 };
+
+let player = { ...start };
+let currentLevel = 0;
+
+function drawMaze() {
+    const cellSize = 40;
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    const maze = levels[currentLevel];
+    for (let y = 0; y < maze.length; y++) {
+        for (let x = 0; x < maze[y].length; x++) {
+            if (maze[y][x] === 1) {
+                ctx.fillStyle = '#000000';
+            } else {
+                ctx.fillStyle = '#FFFFFF';
+            }
+            ctx.fillRect(x * cellSize, y * cellSize, cellSize, cellSize);
+        }
+    }
+    ctx.fillStyle = '#00FF00'; // Color de la salida
+    ctx.fillRect(end.x * cellSize, end.y * cellSize, cellSize, cellSize);
+    ctx.fillStyle = '#FF0000'; // Color del jugador
+    ctx.fillRect(player.x * cellSize, player.y * cellSize, cellSize, cellSize);
+}
+
+function movePlayer(dx, dy) {
+    const newX = player.x + dx;
+    const newY = player.y + dy;
+    const maze = levels[currentLevel];
+    if (maze[newY][newX] === 0) {
+        player.x = newX;
+        player.y = newY;
+        drawMaze();
+        if (player.x === end.x && player.y === end.y) {
+            currentLevel++;
+            if (currentLevel < levels.length) {
+                alert('¡Nivel completado! Pasando al siguiente nivel.');
+                player = { ...start };
+                drawMaze();
+            } else {
+                alert('¡Has completado todos los niveles!');
+            }
+        }
+    }
+}
+
+document.getElementById('startButton').addEventListener('click', () => {
+    player = { ...start };
+    currentLevel = 0;
+    drawMaze();
+});
+
+window.addEventListener('keydown', (e) => {
+    switch (e.key) {
+        case 'ArrowUp':
+            movePlayer(0, -1);
+            break;
+        case 'ArrowDown':
+            movePlayer(0, 1);
+            break;
+        case 'ArrowLeft':
+            movePlayer(-1, 0);
+            break;
+        case 'ArrowRight':
+            movePlayer(1, 0);
+            break;
+    }
+});
+
+    </script>
+</body>
+</html>

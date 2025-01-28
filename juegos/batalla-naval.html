@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Batalla Naval</title>
+    <link rel="stylesheet" href="batalla-naval.css">
+</head>
+<body>
+    <div class="game-container">
+        <h1>Batalla Naval</h1>
+        <div id="instructions">
+            <h2>Instrucciones</h2>
+            <p>1. Haz clic en las celdas del tablero enemigo para atacar.</p>
+            <p>2. Los barcos están distribuidos aleatoriamente en las casillas de ambos tableros. (se marcan en rojo al impactarlos)</p>
+            <p>3. El primer jugador en hundir todos los barcos del oponente gana.</p>
+            <p>4. ¡Buena suerte!</p>
+        </div>
+        <div class="board-container">
+            <div>
+                <h2>Tu Tablero</h2>
+                <div id="player-board" class="board"></div>
+            </div>
+            <div>
+                <h2>Tablero Enemigo</h2>
+                <div id="computer-board" class="board"></div>
+            </div>
+        </div>
+        <button id="reset-btn">Reiniciar Juego</button>
+    </div>
+    <script>
+        const playerBoard = document.getElementById('player-board');
+const computerBoard = document.getElementById('computer-board');
+const resetButton = document.getElementById('reset-btn');
+const playerGrid = createGrid();
+const computerGrid = createGrid();
+let playerTurn = true;
+
+// Inicializar juego
+function initializeGame() {
+    renderBoard(playerBoard, playerGrid, true);
+    renderBoard(computerBoard, computerGrid, false);
+    placeShipsRandomly(playerGrid);
+    placeShipsRandomly(computerGrid);
+    playerTurn = true;
+}
+
+// Crear una cuadrícula vacía
+function createGrid() {
+    const grid = [];
+    for (let i = 0; i < 10; i++) {
+        const row = new Array(10).fill(null);
+        grid.push(row);
+    }
+    return grid;
+}
+
+// Renderizar el tablero en el DOM
+function renderBoard(boardElement, grid, isPlayer) {
+    boardElement.innerHTML = '';
+    for (let row = 0; row < 10; row++) {
+        for (let col = 0; col < 10; col++) {
+            const cell = document.createElement('div');
+            cell.classList.add('cell');
+            cell.dataset.row = row;
+            cell.dataset.col = col;
+            if (!isPlayer) {
+                cell.addEventListener('click', handlePlayerMove);
+            }
+            boardElement.appendChild(cell);
+        }
+    }
+}
+
+// Manejar el movimiento del jugador
+function handlePlayerMove(event) {
+    if (!playerTurn) return;
+    const row = parseInt(event.target.dataset.row);
+    const col = parseInt(event.target.dataset.col);
+    const cell = computerGrid[row][col];
+
+    if (cell === null) {
+        computerGrid[row][col] = 'miss';
+        event.target.classList.add('miss');
+        playerTurn = false;
+        setTimeout(handleComputerMove, 500);
+    } else if (cell === 'ship') {
+        computerGrid[row][col] = 'hit';
+        event.target.classList.add('hit');
+    }
+}
+
+// Manejar el movimiento de la computadora
+function handleComputerMove() {
+    let row, col;
+    do {
+        row = Math.floor(Math.random() * 10);
+        col = Math.floor(Math.random() * 10);
+    } while (playerGrid[row][col] === 'hit' || playerGrid[row][col] === 'miss');
+
+    const cell = playerGrid[row][col];
+    const playerCell = playerBoard.querySelector(`.cell[data-row="${row}"][data-col="${col}"]`);
+
+    if (cell === null) {
+        playerGrid[row][col] = 'miss';
+        playerCell.classList.add('miss');
+    } else if (cell === 'ship') {
+        playerGrid[row][col] = 'hit';
+        playerCell.classList.add('hit');
+    }
+
+    playerTurn = true;
+}
+
+// Colocar barcos aleatoriamente en la cuadrícula
+function placeShipsRandomly(grid) {
+    const ships = [5, 4, 3, 3, 2];
+    for (let ship of ships) {
+        let placed = false;
+        while (!placed) {
+            const direction = Math.random() < 0.5 ? 'horizontal' : 'vertical';
+            const row = Math.floor(Math.random() * 10);
+            const col = Math.floor(Math.random() * 10);
+
+            if (canPlaceShip(grid, row, col, ship, direction)) {
+                placeShip(grid, row, col, ship, direction);
+                placed = true;
+            }
+        }
+    }
+}
+
+// Verificar si se puede colocar un barco
+function canPlaceShip(grid, row, col, ship, direction) {
+    if (direction === 'horizontal') {
+        if (col + ship > 10) return false;
+        for (let i = 0; i < ship; i++) {
+            if (grid[row][col + i] !== null) return false;
+        }
+    } else {
+        if (row + ship > 10) return false;
+        for (let i = 0; i < ship; i++) {
+            if (grid[row + i][col] !== null) return false;
+        }
+    }
+    return true;
+}
+
+// Colocar un barco en la cuadrícula
+function placeShip(grid, row, col, ship, direction) {
+    if (direction === 'horizontal') {
+        for (let i = 0; i < ship; i++) {
+            grid[row][col + i] = 'ship';
+        }
+    } else {
+        for (let i = 0; i < ship; i++) {
+            grid[row + i][col] = 'ship';
+        }
+    }
+}
+
+// Reiniciar el tablero
+resetButton.addEventListener('click', initializeGame);
+
+initializeGame();
+
+    </script>
+</body>
+</html>

@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Juego del Ahorcado</title>
+    <link rel="stylesheet" href="ahorcado.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Juego del Ahorcado</h1>
+        <canvas id="hangmanCanvas" width="200" height="200"></canvas>
+        <div id="wordDisplay"></div>
+        <div id="wrongLetters"></div>
+        <button id="restartButton" style="display: none;">Reiniciar Juego</button>
+        <input type="text" id="letterInput" maxlength="1" placeholder="Ingresa una letra" />
+        <button id="submitLetter">Enviar</button>
+        <p id="message"></p>
+    </div>
+    <script>
+        const words = ["javascript", "programacion", "ahorcado", "desarrollo", "computadora"];
+let selectedWord = "";
+let correctLetters = [];
+let wrongLetters = [];
+let attempts = 6;
+
+const wordDisplay = document.getElementById("wordDisplay");
+const wrongLettersDisplay = document.getElementById("wrongLetters");
+const message = document.getElementById("message");
+const letterInput = document.getElementById("letterInput");
+const submitLetter = document.getElementById("submitLetter");
+const restartButton = document.getElementById("restartButton");
+const canvas = document.getElementById("hangmanCanvas");
+const ctx = canvas.getContext("2d");
+
+function startGame() {
+    selectedWord = words[Math.floor(Math.random() * words.length)];
+    correctLetters = [];
+    wrongLetters = [];
+    attempts = 6;
+
+    wordDisplay.textContent = "_ ".repeat(selectedWord.length);
+    wrongLettersDisplay.textContent = "";
+    message.textContent = "";
+    
+    letterInput.value = "";
+    
+    ctx.clearRect(0, 0, canvas.width, canvas.height); // Limpiar el canvas
+}
+
+function drawHangman() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height); // Limpiar el canvas
+    ctx.beginPath();
+    
+    // Dibuja la horca
+    ctx.moveTo(10, 190);
+    ctx.lineTo(190, 190); // Base
+    ctx.moveTo(40, 190);
+    ctx.lineTo(40, 10);   // Poste vertical
+    ctx.lineTo(140, 10);  // Poste horizontal
+    ctx.lineTo(140, 30);  // Cuerda
+    
+    if (attempts <= 5) { // Cabeza
+        ctx.arc(140, 40, 10, 0, Math.PI * 2);
+    }
+    
+    if (attempts <= 4) { // Cuerpo
+        ctx.moveTo(140, 50);
+        ctx.lineTo(140, 120);
+    }
+    
+    if (attempts <= 3) { // Brazo izquierdo
+        ctx.moveTo(140, 70);
+        ctx.lineTo(110, 90);
+    }
+    
+    if (attempts <= 2) { // Brazo derecho
+        ctx.moveTo(140, 70);
+        ctx.lineTo(170, 90);
+    }
+    
+    if (attempts <= 1) { // Pierna izquierda
+        ctx.moveTo(140, 120);
+        ctx.lineTo(110, 150);
+    }
+    
+    if (attempts <= 0) { // Pierna derecha
+        ctx.moveTo(140, 120);
+        ctx.lineTo(170, 150);
+    }
+    
+    ctx.stroke();
+}
+
+function updateDisplay() {
+    wordDisplay.textContent = selectedWord.split("").map(letter => (correctLetters.includes(letter) ? letter : "_")).join(" ");
+    
+    wrongLettersDisplay.textContent = `Letras incorrectas: ${wrongLetters.join(", ")}`;
+    
+    if (correctLetters.length === new Set(selectedWord).size) {
+        message.textContent = "¡Ganaste!";
+        submitLetter.disabled = true;
+        restartButton.style.display = "block";
+    } else if (attempts <= 0) {
+        message.textContent = `Perdiste! La palabra era "${selectedWord}".`;
+        submitLetter.disabled = true;
+        restartButton.style.display = "block";
+    }
+}
+
+submitLetter.addEventListener("click", () => {
+    const letter = letterInput.value.toLowerCase();
+    
+    if (letter && !correctLetters.includes(letter) && !wrongLetters.includes(letter)) {
+        if (selectedWord.includes(letter)) {
+            correctLetters.push(letter);
+        } else {
+            wrongLetters.push(letter);
+            attempts--;
+            drawHangman(); // Dibuja el ahorcado solo después de un error
+        }
+        
+        updateDisplay();
+    }
+    
+    letterInput.value = "";
+});
+
+restartButton.addEventListener("click", () => {
+    startGame();
+    submitLetter.disabled = false;
+    restartButton.style.display = "none";
+});
+
+startGame();
+
+    </script>
+</body>
+</html>
